@@ -6,26 +6,26 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 router.get('/', async (req, res) => {
   // find all products
-  // be sure to include its associated Category and Tag data
+  // include its associated Category and Tag data
   try {
     const productData = await Product.findAll({
-      include: [{ model: Category,model: Tag}]
+      include: [ Category,  { model: Tag, through: ProductTag}]
     })
     
     res.status(200).json(productData)
   } catch (err) {
-    res.status(500).json(err)
+    res.status(400).json(err)
   }
 });
 
 // get one product
 router.get('/:id', async (req, res) => {
   // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+  // include its associated Category and Tag data
   try {
     const productData = await Product.findByPk(req.params.id, {
-      include: [{ model: Category,
-        model: Tag, through: ProductTag }]
+      include: [ Category,  { model: Tag, through: ProductTag}]
+
     });
     if (!productData) {
       res.status(404).json({ message: 'Product with the provided id does not exist!'})
@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
     res.status(200).json(productData)
 
   } catch (err) {
-    res.status(500).json(err)
+    res.status(400).json(err)
   }
 });
 
@@ -128,9 +128,8 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json(productData) 
 
   } catch (err) {
-    res.status(500).json(err)
+    res.status(400).json(err)
   }
-  
 });
 
 module.exports = router;
